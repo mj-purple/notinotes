@@ -5,6 +5,8 @@ import androidx.core.app.NotificationCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -29,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String text = inputNote.getText().toString().trim();
-                String name = String.valueOf(R.string.channel_name);
+                String name = getString(R.string.channel_name);
+                PendingIntent intent = PendingIntent.getActivity(MainActivity.this, 0, new Intent(MainActivity.this, NotifyActivity.class), PendingIntent.FLAG_IMMUTABLE);
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
                     NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -37,7 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
                     NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(MainActivity.this, NOTIFICATION_CHANNEL_ID)
                             .setContentText(text)
-                            .setSmallIcon(R.drawable.baseline_edit_note_24);
+                            .setSmallIcon(R.drawable.baseline_edit_note_24)
+                            .setOngoing(true)
+                            .setAutoCancel(true)
+                            .addAction(R.drawable.baseline_close_24, "Dismiss", intent);
                     notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
                 }
                 NOTIFICATION_ID += 1;
