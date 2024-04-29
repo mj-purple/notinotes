@@ -1,5 +1,6 @@
 package com.example.notinotes;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -29,20 +30,24 @@ public class NotificationHelper {
     }
 
     public void newNotification(String text, int notificationId, boolean isPersistent) {
-        PendingIntent intent = PendingIntent.getActivity(context, 0, new Intent(context, NotifyActivity.class).putExtra("notificationId", notificationId), PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder notifyBuilder;
         if (isPersistent) {
-            notifyBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            PendingIntent intent = PendingIntent.getActivity(context, 0, new Intent(context, NotifyActivity.class).putExtra("notificationId", notificationId), PendingIntent.FLAG_IMMUTABLE);
+            Notification notify = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                    .setOngoing(true)
                     .setContentText(text)
                     .setSmallIcon(R.drawable.baseline_edit_note_24)
-                    .setOngoing(true)
-                    .addAction(R.drawable.baseline_close_24, "Dismiss", intent);
+                    .setPriority(NotificationCompat.PRIORITY_MIN)
+                    //.addAction(R.drawable.baseline_close_24, "Dismiss", intent)
+                    .build();
+            notify.flags = Notification.FLAG_ONGOING_EVENT;
+            notificationManager.notify(notificationId, notify);
         } else {
-            notifyBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setContentText(text)
+                    .setPriority(NotificationCompat.PRIORITY_MIN)
                     .setSmallIcon(R.drawable.baseline_edit_note_24);
+            notificationManager.notify(notificationId, notifyBuilder.build());
         }
-        notificationManager.notify(notificationId, notifyBuilder.build());
     }
 
     public NotificationManager getNotificationManager() {
