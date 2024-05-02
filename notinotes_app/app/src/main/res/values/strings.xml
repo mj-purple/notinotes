@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Notinotes</string>
     <string name="channel_name">Notes</string>
+    <string name="persistent_check">Make persistent</string>
 </resources>
